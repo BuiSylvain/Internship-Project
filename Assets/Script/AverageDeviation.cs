@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class AverageDeviation : MonoBehaviour
 {
+    [SerializeField] GameObject target;
     int i = 0;
     float sum_Pos_X = 0;
     float sum_Pos_Y = 0;
@@ -19,13 +21,8 @@ public class AverageDeviation : MonoBehaviour
     List<float> Rotation_Z = new List<float>();
     float Sum_AveDeviation = 0;
     public float Ave_AveDeviation = 0;
-
-
-    void Start()
-    {
-       // InvokeRepeating("OutputTime", 1.00f, 1.00f);
-    }
-
+    public float ReadData_Rot_Y = 0;
+    public float ReadData_Rot_Z = 0;
 
     private void Update()
     {
@@ -43,26 +40,41 @@ public class AverageDeviation : MonoBehaviour
         Rotation_Y.Add(transform.rotation.y);
         Rotation_Z.Add(transform.rotation.z);
 
-        Debug.Log(Position_X[i] + "element");
         i++;
         
         if (i == 10)
         {
+            Ave_AveDeviation = 0;
+            ReadData_Rot_Y = 0;
+            ReadData_Rot_Z = 0;
             Sum_AveDeviation = Sum_AveDeviation + AveDeviation(sum_Pos_X, i,Position_X);
-            Position_X = new List<float>();
+            //Debug.Log("1 : " + Sum_AveDeviation);
+           
             Sum_AveDeviation = Sum_AveDeviation + AveDeviation(sum_Pos_Y, i, Position_Y);
-            Position_Y = new List<float>();
+            //Debug.Log("2 : " + Sum_AveDeviation);
+           
             Sum_AveDeviation = Sum_AveDeviation + AveDeviation(sum_Pos_Z, i, Position_Z);
-            Position_Z = new List<float>();
+            //Debug.Log("3 : " + Sum_AveDeviation);
+            
             Sum_AveDeviation = Sum_AveDeviation + AveDeviation(sum_Rot_X, i, Rotation_X);
-            Rotation_X = new List<float>();
+            
+            //Debug.Log("5 : " + Sum_AveDeviation);*/
             Sum_AveDeviation = Sum_AveDeviation + AveDeviation(sum_Rot_Y, i, Rotation_Y);
-            Rotation_Y = new List<float>();
+            ReadData_Rot_Y = AveDeviation(sum_Rot_Y, i, Rotation_Y);
+
+            //Debug.Log("6 : " + Sum_AveDeviation);
             Sum_AveDeviation = Sum_AveDeviation + AveDeviation(sum_Rot_Z, i, Rotation_Z);
-            Rotation_Z = new List<float>();
+            ReadData_Rot_Z = AveDeviation(sum_Rot_Z, i, Rotation_Z);
+            //Debug.Log(ReadData_Rot_Z);
 
             Ave_AveDeviation = Sum_AveDeviation / 6;
 
+            Position_X = new List<float>();
+            Position_Y = new List<float>();
+            Position_Z = new List<float>();
+            Rotation_X = new List<float>();
+            Rotation_Y = new List<float>();
+            Rotation_Z = new List<float>();
             Sum_AveDeviation = 0;
             sum_Pos_X = 0;
             sum_Pos_Y = 0;
@@ -72,8 +84,6 @@ public class AverageDeviation : MonoBehaviour
             sum_Rot_Z = 0;
             i = 0;
         }
-
-
     }
 
 
@@ -83,15 +93,16 @@ public class AverageDeviation : MonoBehaviour
         float means_diff = 0;
         float AverageDeviation = 0;
         means = sum / i;
-        //Debug.Log("the means" + means);
+       //Debug.Log("the means" + means);
         for ( int j = 0; j < i; j++)
         {
             means_diff = means_diff + (Mathf.Abs(Array[j] - means));
         }
-        //Debug.Log("the means diff : " + means_diff);
+       //Debug.Log("the means diff : " + means_diff);
         AverageDeviation = means_diff / i;
-        //Debug.Log("the AveDev: " + AverageDeviation);
+      //Debug.Log("the AveDev: " + AverageDeviation);
 
         return AverageDeviation;
     }
+
 }
